@@ -27,4 +27,4 @@ az deployment group create --name createFunctionApp -g $RG_NAME --template-file 
 
 ## How to run the deploy the function app infrastructure in your Azure Subscription using Deploy Button
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjmasengeshomsft%2Fpoc-table-storage-api-deploy-button%2Fmain%2Finfrastructure%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjmasengeshomsft%2Fapim-validator%2Fmain%2Finfrastructure%2Fazuredeploy.json)
