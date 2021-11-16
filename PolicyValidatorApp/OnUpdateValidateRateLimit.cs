@@ -11,13 +11,21 @@ using Microsoft.Azure.Management.ApiManagement.Models;
 using Microsoft.Azure.Management.ApiManagement;
 using Newtonsoft.Json;
 using APIM.Validation.Modoles;
+using APIM.Validation.Services;
+using System.Collections.Generic;
 
 namespace APIM.Validation.Functions
 {
-    public static class OnUpdateValidateRateLimit
+    public class OnUpdateValidateRateLimit
     {
+        public readonly IAPIPolicyService _apiPolicyService;
+        public OnUpdateValidateRateLimit(IAPIPolicyService policyService)
+        {
+            _apiPolicyService = policyService;
+        }
+
         [FunctionName("OnUpdateValidateRateLimit")]
-        public static async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
+        public  async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
         {
             log.LogInformation($"The event data is: {eventGridEvent.Data.ToString()}");
 
@@ -27,14 +35,22 @@ namespace APIM.Validation.Functions
                 var apiEventGridData = ApiEventGridData.CreateFromUrl(eventData.ResourceUri);
                 var apiPolicies = await GetAPIPolicyAsync(apiEventGridData);
                 log.LogInformation($"The API details are: {JsonConvert.SerializeObject(apiPolicies)}");
-                
+
+                var validators = new List<IAPIMValidator>();
+
+                validators.Add(new RateLimitPolicyValidator());
+
+                var exceptions = _apiPolicyService.GetExceptions(apiPolicies, validators);
+
+                log.LogInformation($"Found Exceptions are: {JsonConvert.SerializeObject(exceptions)}");
+
             }catch(Exception e)
             {
                log.LogInformation($"Unable to get the API. The error is: {e.Message}");
             }
         }
 
-        public static async Task<PolicyContract> GetAPIPolicyAsync(ApiEventGridData data)
+        public async Task<PolicyContract> GetAPIPolicyAsync(ApiEventGridData data)
         {
             var accessToken = await GetAccessTokenAsync();
             var creds = new Microsoft.Rest.TokenCredentials(accessToken);
@@ -49,12 +65,12 @@ namespace APIM.Validation.Functions
             return apiPolicies;
         }
 
-        public static  async Task<string> GetAccessTokenAsync()
-          {
+        public  async Task<string> GetAccessTokenAsync()
+        {
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             var accessToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://management.azure.com");
 
             return accessToken;
-          }
+        }
     }
 }
