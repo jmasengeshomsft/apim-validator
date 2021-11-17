@@ -9,7 +9,7 @@ namespace APIM.Validation.Services
         {
             var exception = new PolicyException
             {
-                ExceptionName = "This API does not have a policy configuration"
+                ExceptionMessage = "This API does not have a policy configuration"
             };
 
             return exception;

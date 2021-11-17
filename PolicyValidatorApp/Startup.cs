@@ -1,5 +1,8 @@
+using System.Threading.Tasks;
 using APIM.Validation.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.Management.ApiManagement;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(APIM.Validation.Functions.Startup))]
@@ -9,7 +12,20 @@ namespace APIM.Validation.Functions
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {  
+            builder.Services.AddSingleton<ApiManagementClient>(InitializeAPIManagementClient().GetAwaiter().GetResult());
             builder.Services.AddSingleton<IAPIPolicyService,APIPolicyService>();
+        }
+
+        public async Task<ApiManagementClient> InitializeAPIManagementClient()
+        {
+            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            var accessToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://management.azure.com");
+
+             var creds = new Microsoft.Rest.TokenCredentials(accessToken);
+
+            var apimClient = new ApiManagementClient(creds);
+
+            return apimClient;
         }
     }
 }

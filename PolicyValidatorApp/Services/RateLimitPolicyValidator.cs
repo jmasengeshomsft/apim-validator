@@ -11,7 +11,8 @@ namespace APIM.Validation.Services
             {
                var exception = new PolicyException
                 {
-                    ExceptionName = "This API does not have a rate limit or quota limit by key"
+                    ExceptionMessage = "This API does not have a rate limit or quota limit by key",
+                    Policy = policy
                 };
 
                return exception;

@@ -6,8 +6,6 @@ using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.Azure.Management.ApiManagement.Models;
 using Microsoft.Azure.Management.ApiManagement;
 using Newtonsoft.Json;
 using APIM.Validation.Modoles;
@@ -18,59 +16,61 @@ namespace APIM.Validation.Functions
 {
     public class OnUpdateValidateRateLimit
     {
+        private ILogger _log;
         public readonly IAPIPolicyService _apiPolicyService;
-        public OnUpdateValidateRateLimit(IAPIPolicyService policyService)
+        public readonly ApiManagementClient _apiManagementClient;
+        public OnUpdateValidateRateLimit(ApiManagementClient apiManagementClient, IAPIPolicyService policyService)
         {
+            _apiManagementClient = apiManagementClient;
             _apiPolicyService = policyService;
+           // _log = logger;
         }
 
         [FunctionName("OnUpdateValidateRateLimit")]
-        public  async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
+        public  async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, 
+                               [EventGrid(TopicEndpointUri = "MyEventGridTopicUriSetting", TopicKeySetting = "MyEventGridTopicKeySetting")]IAsyncCollector<EventGridEvent> outputEvents, ILogger log)
         {
-            log.LogInformation($"The event data is: {eventGridEvent.Data.ToString()}");
+            _log = log;
+            _log.LogInformation($"The event data is: {eventGridEvent.Data.ToString()}");
+
+            var validators = new List<IAPIMValidator>();
+            var exceptions = new List<PolicyException>();
+            var apiEventGridData = new ApiEventGridData();
 
             try
             {
                 var eventData = JsonConvert.DeserializeObject<ApiEventGridData>(eventGridEvent.Data.ToString());
-                var apiEventGridData = ApiEventGridData.CreateFromUrl(eventData.ResourceUri);
-                var apiPolicies = await GetAPIPolicyAsync(apiEventGridData);
-                log.LogInformation($"The API details are: {JsonConvert.SerializeObject(apiPolicies)}");
+                apiEventGridData = ApiEventGridData.CreateFromUrl(eventData.ResourceUri);
+                
+                var apiPolicy = await _apiPolicyService.GetAPIPolicies(apiEventGridData);
 
-                var validators = new List<IAPIMValidator>();
+                if(apiPolicy == null)
+                {
+                    exceptions.Add(new MissingPolicyException());
+                    //return;
+                }
+
+                _log.LogInformation($"The API policy id: {JsonConvert.SerializeObject(apiPolicy)}");
 
                 validators.Add(new RateLimitPolicyValidator());
+                //validators.Add(new PolicyExistenceValidator());
 
-                var exceptions = _apiPolicyService.GetExceptions(apiPolicies, validators);
-
-                log.LogInformation($"Found Exceptions are: {JsonConvert.SerializeObject(exceptions)}");
+                var validatedExceptions = _apiPolicyService.GetExceptions(apiPolicy, validators);
+                exceptions.AddRange(validatedExceptions);
 
             }catch(Exception e)
             {
-               log.LogInformation($"Unable to get the API. The error is: {e.Message}");
+               _log.LogInformation($"Unable to get the API. The error is: {e.Message}");
             }
-        }
 
-        public async Task<PolicyContract> GetAPIPolicyAsync(ApiEventGridData data)
-        {
-            var accessToken = await GetAccessTokenAsync();
-            var creds = new Microsoft.Rest.TokenCredentials(accessToken);
+            foreach(var exception in exceptions)
+            {
+                var myEvent = new EventGridEvent(apiEventGridData.ApiName +"-" + exception.ExceptionMessage, apiEventGridData.ResourceUri, exception, "Apim-Policy-Exception", DateTime.UtcNow, "1.0"); //, "subject-name", "event-data", "event-type", DateTime.UtcNow, "1.0");
+                await outputEvents.AddAsync(myEvent);
+                 _log.LogInformation($"Event for exception: {exception.ExceptionMessage} was created");
+            }
 
-            var apimClient = new ApiManagementClient(creds);
-            apimClient.SubscriptionId = data.Subscription;
-
-            ///var api = await apimClient.Api.GetAsync("apim-rg", "jm-demo-apim", "nonehoeventstats");
-    
-            var apiPolicies = await apimClient.ApiPolicy.GetAsync(data.ResourceGroup, data.ApimServiceName, data.ApiName);
-
-            return apiPolicies;
-        }
-
-        public  async Task<string> GetAccessTokenAsync()
-        {
-            var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            var accessToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://management.azure.com");
-
-            return accessToken;
+           _log.LogInformation($"Found Exceptions are: {JsonConvert.SerializeObject(exceptions)}");
         }
     }
 }
