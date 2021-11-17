@@ -24,9 +24,9 @@ namespace APIM.Validation.Services
 
                 ///var api = await apimClient.Api.GetAsync("apim-rg", "jm-demo-apim", "nonehoeventstats");
         
-                var apiPolicies = await _apiManagementClient.ApiPolicy.GetAsync(apiData.ResourceGroup, apiData.ApimServiceName, apiData.ApiName);
+                var apiPolicy = await _apiManagementClient.ApiPolicy.GetAsync(apiData.ResourceGroup, apiData.ApimServiceName, apiData.ApiName);
 
-                return apiPolicies;
+                return apiPolicy;
 
             }catch(Exception ex)
             {

@@ -53,7 +53,6 @@ namespace APIM.Validation.Functions
                 _log.LogInformation($"The API policy id: {JsonConvert.SerializeObject(apiPolicy)}");
 
                 validators.Add(new RateLimitPolicyValidator());
-                //validators.Add(new PolicyExistenceValidator());
 
                 var validatedExceptions = _apiPolicyService.GetExceptions(apiPolicy, validators);
                 exceptions.AddRange(validatedExceptions);
@@ -65,7 +64,7 @@ namespace APIM.Validation.Functions
 
             foreach(var exception in exceptions)
             {
-                var myEvent = new EventGridEvent(apiEventGridData.ApiName +"-" + exception.ExceptionMessage, apiEventGridData.ResourceUri, exception, "Apim-Policy-Exception", DateTime.UtcNow, "1.0"); //, "subject-name", "event-data", "event-type", DateTime.UtcNow, "1.0");
+                var myEvent = new EventGridEvent(apiEventGridData.ApiName +"-" + exception.ExceptionMessage,$"API POLICY EXCEPTION ({apiEventGridData.ApimServiceName}) -{eventGridEvent.Subject} : { exception.ExceptionMessage}", new PolicyExceptionFlat(exception), "Apim-Policy-Exception", DateTime.UtcNow, "1.0"); //, "subject-name", "event-data", "event-type", DateTime.UtcNow, "1.0");
                 await outputEvents.AddAsync(myEvent);
                  _log.LogInformation($"Event for exception: {exception.ExceptionMessage} was created");
             }
