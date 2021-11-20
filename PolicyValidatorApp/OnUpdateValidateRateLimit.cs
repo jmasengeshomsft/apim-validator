@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using APIM.Validation.Modoles;
 using APIM.Validation.Services;
 using System.Collections.Generic;
+using Azure.Identity;
 
 namespace APIM.Validation.Functions
 {
@@ -19,16 +20,16 @@ namespace APIM.Validation.Functions
         private ILogger _log;
         public readonly IAPIPolicyService _apiPolicyService;
         public readonly ApiManagementClient _apiManagementClient;
-        public OnUpdateValidateRateLimit(ApiManagementClient apiManagementClient, IAPIPolicyService policyService)
+        public readonly Azure.Messaging.EventGrid.EventGridPublisherClient _eventGridClient;
+        public OnUpdateValidateRateLimit(ApiManagementClient apiManagementClient, Azure.Messaging.EventGrid.EventGridPublisherClient eventGridClient, IAPIPolicyService policyService)
         {
             _apiManagementClient = apiManagementClient;
+            _eventGridClient = eventGridClient;
             _apiPolicyService = policyService;
-           // _log = logger;
         }
 
         [FunctionName("OnUpdateValidateRateLimit")]
-        public  async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, 
-                               [EventGrid(TopicEndpointUri = "MyEventGridTopicUriSetting", TopicKeySetting = "MyEventGridTopicKeySetting")]IAsyncCollector<EventGridEvent> outputEvents, ILogger log)
+        public  async Task Run([EventGridTrigger] EventGridEvent eventGridEvent, ILogger log)
         {
             _log = log;
             _log.LogInformation($"The event data is: {eventGridEvent.Data.ToString()}");
@@ -64,8 +65,8 @@ namespace APIM.Validation.Functions
 
             foreach(var exception in exceptions)
             {
-                var myEvent = new EventGridEvent(apiEventGridData.ApiName +"-" + exception.ExceptionMessage,$"API POLICY EXCEPTION ({apiEventGridData.ApimServiceName}) -{eventGridEvent.Subject} : { exception.ExceptionMessage}", new PolicyExceptionFlat(exception), "Apim-Policy-Exception", DateTime.UtcNow, "1.0"); //, "subject-name", "event-data", "event-type", DateTime.UtcNow, "1.0");
-                await outputEvents.AddAsync(myEvent);
+                var exceptionEvent = new Azure.Messaging.EventGrid.EventGridEvent($"API POLICY EXCEPTION ({apiEventGridData.ApimServiceName}) -{eventGridEvent.Subject} : { exception.ExceptionMessage}", "Apim.Policy.Exception", "1.0", new PolicyExceptionFlat(exception));
+                await _eventGridClient.SendEventAsync(exceptionEvent);
                  _log.LogInformation($"Event for exception: {exception.ExceptionMessage} was created");
             }
 

@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using APIM.Validation.Services;
+using Azure.Identity;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.Management.ApiManagement;
 using Microsoft.Azure.Services.AppAuthentication;
@@ -13,6 +15,7 @@ namespace APIM.Validation.Functions
         public override void Configure(IFunctionsHostBuilder builder)
         {  
             builder.Services.AddSingleton<ApiManagementClient>(InitializeAPIManagementClient().GetAwaiter().GetResult());
+            builder.Services.AddSingleton<Azure.Messaging.EventGrid.EventGridPublisherClient>(InitializeEventGridExceptionTopicClient());
             builder.Services.AddSingleton<IAPIPolicyService,APIPolicyService>();
         }
 
@@ -21,11 +24,18 @@ namespace APIM.Validation.Functions
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             var accessToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://management.azure.com");
 
-             var creds = new Microsoft.Rest.TokenCredentials(accessToken);
+            var creds = new Microsoft.Rest.TokenCredentials(accessToken);
 
             var apimClient = new ApiManagementClient(creds);
 
             return apimClient;
+        }
+
+        public Azure.Messaging.EventGrid.EventGridPublisherClient InitializeEventGridExceptionTopicClient()
+        {
+            var creds = new DefaultAzureCredential();
+            var eventGridClient = new Azure.Messaging.EventGrid.EventGridPublisherClient(new Uri("https://apim-policy-exceptions.centralus-1.eventgrid.azure.net/api/events"), creds);
+            return eventGridClient;
         }
     }
 }

@@ -5,6 +5,15 @@
         "appPrefix": {
             "value": "devcomm" 
         },
+        "apimServiceName": {
+            "value": "your apim service name" 
+        },
+        "apimServiceEventTopicName": {
+            "value": "apimEventAutomationTopic" 
+        },
+        "updatesAzureFunctionSubscription":{
+            "value": "updates-azure-function-exceptions"
+        },
         "htmlContainerName": {
             "value": "raw-html-page-content" 
         },
