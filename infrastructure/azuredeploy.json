@@ -178,7 +178,7 @@
         ],
         "properties": {
             "source": "[resourceID('Microsoft.ApiManagement/service', parameters('apimServiceName'))]",
-            "topicType": "Microsoft.ApiManagement"
+            "topicType": "Microsoft.ApiManagementService"
         }
     },
     {
