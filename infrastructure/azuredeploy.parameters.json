@@ -22,6 +22,12 @@
         },
         "skillTableName": {
             "value": "FacetSkills" 
+        },
+        "exceptionLogicAppName": {
+            "value": "The name of logic app for exceptions" 
+        },
+        "connections_visualstudioteamservices_name": {
+            "value": "The name of Azure DevOps Project"
         }
     }
 }
