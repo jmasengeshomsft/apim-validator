@@ -8,8 +8,8 @@
         "apimServiceName": {
             "value": "your apim service name" 
         },
-        "apimServiceNameResourceGroup":{
-            "value": "the apim resource group"
+        "apimExceptionsEventGridTopic":{
+            "value": "The name of the event grid topic for apim exceptions"
         },
         "apimServiceEventTopicName": {
             "value": "apimEventAutomationTopic" 

@@ -26,7 +26,7 @@
     "apimServiceName": {
        "type": "string"
     },
-    "apimServiceNameResourceGroup": {
+    "apimExceptionsEventGridTopic": {
        "type": "string"
     },
     "apimServiceEventTopicName": {
@@ -231,6 +231,7 @@
                     "maxEventsPerBatch": 1,
                     "preferredBatchSizeInKilobytes": 64,
                     "resourceId" : "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+                    // "resourceId": "[concat(parameters('sites_apimvalid_545os7mvm5lyy_function_app_externalid'), '/functions/OnUpdateValidateRateLimit')]",
                 },
                 "endpointType": "AzureFunction"
             },
@@ -247,6 +248,20 @@
                     "maxDeliveryAttempts": 30,
                     "eventTimeToLiveInMinutes": 1440
                 }
+        }
+    },
+    {
+        "type": "Microsoft.EventGrid/topics",
+        "apiVersion": "2021-12-01",
+        "name": "[parameters('apimExceptionsEventGridTopic')]",
+            "location": "[parameters('location')]",
+        "identity": {
+            "type": "SystemAssigned"
+        },
+        "properties": {
+            "inputSchema": "EventGridSchema",
+            "publicNetworkAccess": "Enabled",
+            "disableLocalAuth": false
         }
     }
   ]
