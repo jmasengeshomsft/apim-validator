@@ -171,19 +171,19 @@
     {
         "name": "[parameters('apimServiceEventTopicName')]",
         "type": "Microsoft.EventGrid/systemTopics",
-        "apiVersion": "2020-04-01-preview",
+        "apiVersion": "2021-06-01-preview",
         "location": "[parameters('location')]",
         "dependsOn": [
              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
         ],
         "properties": {
             "source": "[resourceID('Microsoft.ApiManagement/service', parameters('apimServiceName'))]",
-            "topicType": "Microsoft.ApiManagementService"
+            "topicType": "Microsoft.ApiManagement.Service"
         }
     },
     {
         "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
-        "apiVersion": "2020-04-01-preview",
+        "apiVersion": "2021-06-01-preview",
         "name": "[concat(parameters('apimServiceEventTopicName'), '/', parameters('updatesAzureFunctionSubscription'))]",
         "dependsOn": [
             "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceEventTopicName'))]"
@@ -193,7 +193,8 @@
                 "properties": {
                     // "name": "[variables('functionAppName')]",
                     // "endpointUrl": "[parameters('endpoint')]",
-                    "maxEventsPerBatch": 5,
+                    "maxEventsPerBatch": 1,
+                    "preferredBatchSizeInKilobytes": 64,
                     "resourceId" : "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
                 },
                 "endpointType": "AzureFunction"
@@ -202,8 +203,15 @@
                 "includedEventTypes": [
                     "Microsoft.ApiManagement.APICreated",
                     "Microsoft.ApiManagement.APIUpdated"
-                ]
-            }
+                ],
+                "enableAdvancedFilteringOnArrays": true
+            },
+             "labels": [],
+                "eventDeliverySchema": "EventGridSchema",
+                "retryPolicy": {
+                    "maxDeliveryAttempts": 30,
+                    "eventTimeToLiveInMinutes": 1440
+                }
         }
     }
   ]
