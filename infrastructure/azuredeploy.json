@@ -42,8 +42,8 @@
     "storageAccountSkillTableName": "[concat('default/', parameters('skillTableName'))]",
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
     "functionAppName": "[concat(parameters('appPrefix'), '-' ,uniqueString(resourceGroup().id),'-function-app')]",
-    "appInsightsname": "[concat(parameters('appPrefix'), '-' ,uniqueString(resourceGroup().id), '-app-insights')]"
-    // "apimServiceRef": "[resourceID('Microsoft.ApiManagement/service', parameters('apimServiceName'))]"
+    "appInsightsname": "[concat(parameters('appPrefix'), '-' ,uniqueString(resourceGroup().id), '-app-insights')]",
+    "apimServiceSystemTopic": "[resourceID(parameters('apimServiceNameResourceGroup'),'Microsoft.EventGrid/systemTopics', parameters('apimServiceEventTopicName'))]"
 
   },
   "resources": [
@@ -221,7 +221,7 @@
         "apiVersion": "2021-06-01-preview",
         "name": "[concat(parameters('apimServiceEventTopicName'), '/', parameters('updatesAzureFunctionSubscription'))]",
         "dependsOn": [
-            "[resourceId(parameters('apimServiceNameResourceGroup'), 'Microsoft.EventGrid/systemTopics', parameters('apimServiceEventTopicName'))]"
+            "[variables('apimServiceSystemTopic')]"
         ],
         "properties": {
             "destination": {
