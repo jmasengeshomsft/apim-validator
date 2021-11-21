@@ -204,7 +204,7 @@
     //     }
     // },
     {
-        "name": "[parameters('apimServiceEventTopicName')]",
+        "name": "[parameters('apimServiceName')]",
         "type": "Microsoft.EventGrid/systemTopics",
         "apiVersion": "2021-06-01-preview",
         "location": "[parameters('location')]",
@@ -218,7 +218,7 @@
     },
     {
         "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
-        "apiVersion": "2021-06-01-preview",
+        "apiVersion": "2020-04-01-preview",
         "name": "[concat(parameters('apimServiceEventTopicName'), '/', parameters('updatesAzureFunctionSubscription'))]",
         "dependsOn": [
              "[variables('apimServiceSystemTopic')]"
