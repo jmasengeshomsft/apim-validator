@@ -26,6 +26,9 @@
     "apimServiceName": {
        "type": "string"
     },
+    "apimServiceNameResourceGroup": {
+       "type": "string"
+    },
     "apimServiceEventTopicName": {
        "type": "string"
     },
@@ -177,7 +180,7 @@
              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
         ],
         "properties": {
-            "source": "[resourceID('Microsoft.ApiManagement/service', parameters('apimServiceName'))]",
+            "source": "[resourceID(parameters('apimServiceNameResourceGroup'),'Microsoft.ApiManagement/service', parameters('apimServiceName'))]",
             "topicType": "Microsoft.ApiManagement.Service"
         }
     },
