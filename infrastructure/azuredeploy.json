@@ -209,7 +209,8 @@
         "apiVersion": "2021-12-01",
         "name": "[concat(parameters('apimServiceName'), '/', variables('functionAppName'))]",
         "dependsOn": [
-              "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]"
+              "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]",
+              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
         ],
         "properties": {
             "destination": {
