@@ -442,7 +442,7 @@
                                         }
                                     },
                                     "method": "patch",
-                                    "path": "/@{encodeURIComponent(encodeURIComponent(parameters('azureDevOpsProject')))}/_apis/wit/workitems/$@{encodeURIComponent('issue')}",
+                                    "path": "[concat('/@{encodeURIComponent(encodeURIComponent(''', parameters('azureDevOpsProject'), '''))}', '/_apis/wit/workitems/issue')]",
                                     "queries": {
                                         "account": "[parameters('azureDevOpsAccount')]"
                                     }
@@ -466,6 +466,7 @@
                     }
                 }
                 // "$devOpsProject": {
+                //     "siteName": "[concat('/datasets/@{encodeURIComponent(encodeURIComponent(''', parameters('spoSiteName'), '''))}', '/triggers/onupdatedfile')]",
                 //     "type": "String",
                 //     "value": "[parameters('azureDevOpsProject')]"
                 // }
