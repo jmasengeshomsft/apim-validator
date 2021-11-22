@@ -26,18 +26,6 @@
     "apimServiceName": {
        "type": "string"
     },
-    "apimExceptionsEventGridTopic": {
-       "type": "string"
-    },
-    "apimServiceEventTopicName": {
-       "type": "string"
-    },
-    "updatesAzureFunctionSubscription": {
-       "type": "string"
-    },
-    "exceptionLogicAppName": {
-        "type": "string"
-    },
     "connections_visualstudioteamservices_name": {
         "type": "string",
          "defaultValue": "visualstudioteamservices"
@@ -49,8 +37,9 @@
     "storageAccountSkillTableName": "[concat('default/', parameters('skillTableName'))]",
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
     "functionAppName": "[concat(parameters('appPrefix'), '-' ,uniqueString(resourceGroup().id),'-function-app')]",
-    "appInsightsname": "[concat(parameters('appPrefix'), '-' ,uniqueString(resourceGroup().id), '-app-insights')]"
-    ///"apimServiceSystemTopic": "[resourceID('Microsoft.EventGrid/systemTopics', parameters('apimServiceEventTopicName'))]"
+    "appInsightsname": "[concat(parameters('appPrefix'), '-' ,uniqueString(resourceGroup().id), '-app-insights')]",
+    "apimServiceExceptionsTopicName":  "[concat(parameters('apimServiceName'), '-exceptions-topic')]",
+     "apimServiceExceptionLogicAppName":  "[concat(parameters('apimServiceName'), '-exceptions-logic-app')]"
 
   },
   "resources": [
@@ -223,44 +212,44 @@
             "topicType": "Microsoft.ApiManagement.Service"
         }
     },
-    {
-        "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
-        "apiVersion": "2020-04-01-preview",
-        "name": "[concat(parameters('apimServiceEventTopicName'), '/', parameters('updatesAzureFunctionSubscription'))]",
-        "dependsOn": [
-              "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]"
-        ],
-        "properties": {
-            "destination": {
-                "properties": {
-                    // "name": "[variables('functionAppName')]",
-                    // "endpointUrl": "[parameters('endpoint')]",
-                    "maxEventsPerBatch": 1,
-                    "preferredBatchSizeInKilobytes": 64,
-                    "resourceId" : "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-                    // "resourceId": "[concat(parameters('sites_apimvalid_545os7mvm5lyy_function_app_externalid'), '/functions/OnUpdateValidateRateLimit')]",
-                },
-                "endpointType": "AzureFunction"
-            },
-            "filter": {
-                "includedEventTypes": [
-                    "Microsoft.ApiManagement.APICreated",
-                    "Microsoft.ApiManagement.APIUpdated"
-                ],
-                "enableAdvancedFilteringOnArrays": true
-            },
-             "labels": [],
-                "eventDeliverySchema": "EventGridSchema",
-                "retryPolicy": {
-                    "maxDeliveryAttempts": 30,
-                    "eventTimeToLiveInMinutes": 1440
-                }
-        }
-    },
+    // {
+    //     "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+    //     "apiVersion": "2020-04-01-preview",
+    //     "name": "[concat(parameters('apimServiceEventTopicName'), '/', parameters('updatesAzureFunctionSubscription'))]",
+    //     "dependsOn": [
+    //           "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]"
+    //     ],
+    //     "properties": {
+    //         "destination": {
+    //             "properties": {
+    //                 // "name": "[variables('functionAppName')]",
+    //                 // "endpointUrl": "[parameters('endpoint')]",
+    //                 "maxEventsPerBatch": 1,
+    //                 "preferredBatchSizeInKilobytes": 64,
+    //                 "resourceId" : "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+    //                 // "resourceId": "[concat(parameters('sites_apimvalid_545os7mvm5lyy_function_app_externalid'), '/functions/OnUpdateValidateRateLimit')]",
+    //             },
+    //             "endpointType": "AzureFunction"
+    //         },
+    //         "filter": {
+    //             "includedEventTypes": [
+    //                 "Microsoft.ApiManagement.APICreated",
+    //                 "Microsoft.ApiManagement.APIUpdated"
+    //             ],
+    //             "enableAdvancedFilteringOnArrays": true
+    //         },
+    //          "labels": [],
+    //             "eventDeliverySchema": "EventGridSchema",
+    //             "retryPolicy": {
+    //                 "maxDeliveryAttempts": 30,
+    //                 "eventTimeToLiveInMinutes": 1440
+    //             }
+    //     }
+    // },
     {
         "type": "Microsoft.EventGrid/topics",
         "apiVersion": "2021-12-01",
-        "name": "[parameters('apimExceptionsEventGridTopic')]",
+        "name": "[variables('apimServiceExceptionsTopicName')]",
         "location": "[parameters('location')]",
         "identity": {
             "type": "SystemAssigned"
@@ -274,16 +263,16 @@
     {
         "type": "Microsoft.EventGrid/eventSubscriptions",
         "apiVersion": "2020-06-01",
-        "name": "[parameters('exceptionLogicAppName')]",
-        "scope": "[format('Microsoft.EventGrid/topics/{0}', parameters('apimExceptionsEventGridTopic'))]",
+        "name": "[variables('apimServiceExceptionLogicAppName')]",
+        "scope": "[format('Microsoft.EventGrid/topics/{0}', variables('apimServiceExceptionsTopicName'))]",
         "dependsOn": [
-            "[resourceId('Microsoft.EventGrid/topics', parameters('apimExceptionsEventGridTopic'))]",
-            "[resourceId('Microsoft.Logic/workflows', parameters('exceptionLogicAppName'))]"
+            "[resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName'))]",
+            "[resourceId('Microsoft.Logic/workflows', variables('apimServiceExceptionLogicAppName'))]"
         ],
         "properties": {
             "destination": {
                 "properties": {
-                    "endpointUrl": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('exceptionLogicAppName')), '/triggers/manual'), '2016-06-01').value]"
+                    "endpointUrl": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', variables('apimServiceExceptionLogicAppName')), '/triggers/manual'), '2016-06-01').value]"
                 },
                 "endpointType": "WebHook"
             }
@@ -326,7 +315,7 @@
     {
         "type": "Microsoft.Logic/workflows",
         "apiVersion": "2017-07-01",
-        "name": "[parameters('exceptionLogicAppName')]",
+        "name": "[variables('apimServiceExceptionLogicAppName')]",
         "location": "[parameters('location')]",
         "identity": {
             "type": "SystemAssigned"

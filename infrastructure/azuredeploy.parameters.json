@@ -8,23 +8,11 @@
         "apimServiceName": {
             "value": "your apim service name" 
         },
-        "apimExceptionsEventGridTopic":{
-            "value": "The name of the event grid topic for apim exceptions"
-        },
-        "apimServiceEventTopicName": {
-            "value": "apimEventAutomationTopic" 
-        },
-        "updatesAzureFunctionSubscription":{
-            "value": "updates-azure-function-exceptions"
-        },
         "htmlContainerName": {
             "value": "raw-html-page-content" 
         },
         "skillTableName": {
             "value": "FacetSkills" 
-        },
-        "exceptionLogicAppName": {
-            "value": "The name of logic app for exceptions" 
         },
         "connections_visualstudioteamservices_name": {
             "value": "The name of Azure DevOps Project"
