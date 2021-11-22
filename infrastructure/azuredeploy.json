@@ -136,8 +136,8 @@
                      "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
                 ],
                 "properties": {
-                    "RepoUrl": "https://github.com/jmasengeshomsft/apim-validator.git",
-                    "branch": "master",
+                    "repoUrl": "https://github.com/jmasengeshomsft/apim-validator.git",
+                    "branch": "main",
                     "publishRunbook": true,
                     "IsManualIntegration": true
                 }
