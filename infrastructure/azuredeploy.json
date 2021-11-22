@@ -272,9 +272,10 @@
         }
     },
     {
-        "type": "Microsoft.EventGrid/topics/eventSubscriptions",
-        "apiVersion": "2020-04-01-preview",
+        "type": "Microsoft.EventGrid/eventSubscriptions",
+        "apiVersion": "2020-06-01",
         "name": "[concat(parameters('apimExceptionsEventGridTopic'), '/', parameters('exceptionLogicAppName'))]",
+        "scope": "[format('Microsoft.EventGrid/topics/{0}', parameters('apimExceptionsEventGridTopic'))]",
         "dependsOn": [
             "[resourceId('Microsoft.EventGrid/topics', parameters('apimExceptionsEventGridTopic'))]",
             "[resourceId('Microsoft.Logic/workflows', parameters('exceptionLogicAppName'))]"
