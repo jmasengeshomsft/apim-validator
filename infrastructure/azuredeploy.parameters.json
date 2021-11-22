@@ -8,12 +8,6 @@
         "apimServiceName": {
             "value": "your apim service name" 
         },
-        "htmlContainerName": {
-            "value": "raw-html-page-content" 
-        },
-        "skillTableName": {
-            "value": "FacetSkills" 
-        },
         "connections_visualstudioteamservices_name": {
             "value": "The name of Azure DevOps Project"
         }
