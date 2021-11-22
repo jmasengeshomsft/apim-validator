@@ -274,7 +274,7 @@
     {
         "type": "Microsoft.EventGrid/eventSubscriptions",
         "apiVersion": "2020-06-01",
-        "name": "[concat(parameters('apimExceptionsEventGridTopic'), '/', parameters('exceptionLogicAppName'))]",
+        "name": "[parameters('exceptionLogicAppName')]",
         "scope": "[format('Microsoft.EventGrid/topics/{0}', parameters('apimExceptionsEventGridTopic'))]",
         "dependsOn": [
             "[resourceId('Microsoft.EventGrid/topics', parameters('apimExceptionsEventGridTopic'))]",
