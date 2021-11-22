@@ -204,40 +204,40 @@
             "topicType": "Microsoft.ApiManagement.Service"
         }
     },
-    // {
-    //     "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
-    //     "apiVersion": "2020-04-01-preview",
-    //     "name": "[concat(parameters('apimServiceEventTopicName'), '/', parameters('updatesAzureFunctionSubscription'))]",
-    //     "dependsOn": [
-    //           "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]"
-    //     ],
-    //     "properties": {
-    //         "destination": {
-    //             "properties": {
-    //                 // "name": "[variables('functionAppName')]",
-    //                 // "endpointUrl": "[parameters('endpoint')]",
-    //                 "maxEventsPerBatch": 1,
-    //                 "preferredBatchSizeInKilobytes": 64,
-    //                 "resourceId" : "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-    //                 // "resourceId": "[concat(parameters('sites_apimvalid_545os7mvm5lyy_function_app_externalid'), '/functions/OnUpdateValidateRateLimit')]",
-    //             },
-    //             "endpointType": "AzureFunction"
-    //         },
-    //         "filter": {
-    //             "includedEventTypes": [
-    //                 "Microsoft.ApiManagement.APICreated",
-    //                 "Microsoft.ApiManagement.APIUpdated"
-    //             ],
-    //             "enableAdvancedFilteringOnArrays": true
-    //         },
-    //          "labels": [],
-    //             "eventDeliverySchema": "EventGridSchema",
-    //             "retryPolicy": {
-    //                 "maxDeliveryAttempts": 30,
-    //                 "eventTimeToLiveInMinutes": 1440
-    //             }
-    //     }
-    // },
+    {
+        "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+        "apiVersion": "2020-04-01-preview",
+        "name": "[concat(parameters('apimServiceName'), '/', variables('functionAppName'))]",
+        "dependsOn": [
+              "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]"
+        ],
+        "properties": {
+            "destination": {
+                "properties": {
+                    // "name": "[variables('functionAppName')]",
+                    // "endpointUrl": "[parameters('endpoint')]",
+                    "maxEventsPerBatch": 1,
+                    "preferredBatchSizeInKilobytes": 64,
+                    //"resourceId" : "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+                    "resourceId": "[concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/functions/OnUpdateValidateRateLimit')]"
+                },
+                "endpointType": "AzureFunction"
+            },
+            "filter": {
+                "includedEventTypes": [
+                    "Microsoft.ApiManagement.APICreated",
+                    "Microsoft.ApiManagement.APIUpdated"
+                ],
+                "enableAdvancedFilteringOnArrays": true
+            },
+             "labels": [],
+                "eventDeliverySchema": "EventGridSchema",
+                "retryPolicy": {
+                    "maxDeliveryAttempts": 30,
+                    "eventTimeToLiveInMinutes": 1440
+                }
+        }
+    },
     {
         "type": "Microsoft.EventGrid/topics",
         "apiVersion": "2021-12-01",
