@@ -206,7 +206,7 @@
     },
     {
         "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
-        "apiVersion": "2020-04-01-preview",
+        "apiVersion": "2021-12-01",
         "name": "[concat(parameters('apimServiceName'), '/', variables('functionAppName'))]",
         "dependsOn": [
               "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]"
