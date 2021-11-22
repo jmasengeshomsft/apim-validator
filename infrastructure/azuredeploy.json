@@ -115,33 +115,12 @@
                         "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                         "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
                     }
-                    // {
-                    //     "name": "APIM_EXCEPTIONS_TOPIC_ENDPOINT",
-                    //     "value": "[reference(resourceId('Microsoft.EventGrid/topics/', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]"
-                    // }
                 ]
             }
         },
         "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
             "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
-           // "[resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName'))]"
-        ],
-        "resources": [
-            // {
-            //     "apiVersion": "2015-08-01",
-            //     "name": "web",
-            //     "type": "sourcecontrols",
-            //     "dependsOn": [
-            //          "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-            //     ],
-            //     "properties": {
-            //         "repoUrl": "https://github.com/jmasengeshomsft/apim-validator.git",
-            //         "branch": "main",
-            //         "publishRunbook": true,
-            //         "IsManualIntegration": true
-            //     }
-            // }
         ]
     },
     {
@@ -215,11 +194,8 @@
         "properties": {
             "destination": {
                 "properties": {
-                    // "name": "[variables('functionAppName')]",
-                    // "endpointUrl": "[parameters('endpoint')]",
                     "maxEventsPerBatch": 1,
                     "preferredBatchSizeInKilobytes": 64,
-                    //"resourceId" : "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
                     "resourceId": "[concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/functions/OnUpdateValidateRateLimit')]"
                 },
                 "endpointType": "AzureFunction"
@@ -345,12 +321,12 @@
                 "description": "Azure DevOps provides services for teams to share code, track work, and ship software - for any language, all in a single package. It's the perfect complement to your IDE.",
                 "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1528/1.0.1528.2589/vsts/icon.png",
                 "brandColor": "#0078d7",
-                "id": "[concat('/subscriptions/b79b3641-f295-4473-b807-e858d16b195b/providers/Microsoft.Web/locations/centralus/managedApis/', parameters('connections_visualstudioteamservices_name'))]",
+                "id": "[concat('Microsoft.Web/locations/centralus/managedApis/', parameters('connections_visualstudioteamservices_name'))]",
                 "type": "Microsoft.Web/locations/managedApis"
             },
             "testLinks": [
                 {
-                    "requestUri": "[concat('https://management.azure.com:443/subscriptions/b79b3641-f295-4473-b807-e858d16b195b/resourceGroups/apim-validator-demo/providers/Microsoft.Web/connections/', parameters('connections_visualstudioteamservices_name'), '/extensions/proxy/_apis/Accounts?api-version=2016-06-01')]",
+                    "requestUri": "[concat('Microsoft.Web/connections/', parameters('connections_visualstudioteamservices_name'), '/extensions/proxy/_apis/Accounts?api-version=2016-06-01')]",
                     "method": "get"
                 }
             ]
@@ -479,7 +455,7 @@
                         "visualstudioteamservices": {
                             "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_visualstudioteamservices_name'))]",
                             "connectionName": "visualstudioteamservices",
-                            "id": "/subscriptions/b79b3641-f295-4473-b807-e858d16b195b/providers/Microsoft.Web/locations/centralus/managedApis/visualstudioteamservices"
+                            "id": "Microsoft.Web/locations/centralus/managedApis/visualstudioteamservices"
                         }
                     }
                 }
