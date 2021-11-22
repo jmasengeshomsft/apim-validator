@@ -10,6 +10,12 @@
         },
         "connections_visualstudioteamservices_name": {
             "value": "The name of Azure DevOps Project"
+        },
+        "azureDevOpsAccount": {
+            "value": "The name of Azure DevOps Account"
+        },
+        "azureDevOpsProject": {
+            "value": "The name of Azure DevOps Project"
         }
     }
 }

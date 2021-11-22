@@ -26,6 +26,12 @@
     "connections_visualstudioteamservices_name": {
         "type": "string",
          "defaultValue": "visualstudioteamservices"
+    },
+    "azureDevOpsAccount": {
+        "type": "string"
+    },
+     "azureDevOpsProject": {
+        "type": "string"
     }
   },
    "variables": {
@@ -436,9 +442,9 @@
                                         }
                                     },
                                     "method": "patch",
-                                    "path": "/@{encodeURIComponent('CLIENT-DEMOS')}/_apis/wit/workitems/$@{encodeURIComponent('issue')}",
+                                    "path": "/@{encodeURIComponent(parameters('$azureDevOpsAccount'))}/_apis/wit/workitems/$@{encodeURIComponent('issue')}",
                                     "queries": {
-                                        "account": "jmasenMSFT"
+                                        "account": "[parameters('azureDevOpsAccount')]"
                                     }
                                 }
                             }
