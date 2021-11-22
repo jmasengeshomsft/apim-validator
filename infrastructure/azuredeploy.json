@@ -114,13 +114,18 @@
                     {
                         "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                         "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
+                    },
+                    {
+                        "name": "APIMEXCEPTIONS_TOPIC_URL",
+                        "value": "[reference(resourceId('Microsoft.EventGrid/topics/', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]"
                     }
                 ]
             }
         },
         "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-            "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+            "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
+            "[resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName'))]"
         ]
     },
     {
