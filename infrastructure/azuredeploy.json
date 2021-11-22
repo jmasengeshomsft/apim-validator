@@ -442,7 +442,7 @@
                                         }
                                     },
                                     "method": "patch",
-                                    "path": "/@{encodeURIComponent(parameters('azureDevOpsProject'))}/_apis/wit/workitems/$@{encodeURIComponent('issue')}",
+                                    "path": "/@{encodeURIComponent(encodeURIComponent(parameters('azureDevOpsProject')))}/_apis/wit/workitems/$@{encodeURIComponent('issue')}",
                                     "queries": {
                                         "account": "[parameters('azureDevOpsAccount')]"
                                     }
@@ -465,6 +465,10 @@
                         }
                     }
                 }
+                // "$devOpsProject": {
+                //     "type": "String",
+                //     "value": "[parameters('azureDevOpsProject')]"
+                // }
             }
         }
     }
