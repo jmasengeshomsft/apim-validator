@@ -272,6 +272,23 @@
         }
     },
     {
+        "type": "Microsoft.EventGrid/topics/eventSubscriptions",
+        "apiVersion": "2020-04-01-preview",
+        "name": "[concat(parameters('apimExceptionsEventGridTopic'), '/', parameters('exceptionLogicAppName'))]",
+        "dependsOn": [
+            "[resourceId('Microsoft.EventGrid/topics', parameters('apimExceptionsEventGridTopic'))]",
+            "[resourceId('Microsoft.Logic/workflows', parameters('exceptionLogicAppName'))]"
+        ],
+        "properties": {
+            "destination": {
+                "properties": {
+                    "endpointUrl": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', parameters('exceptionLogicAppName')), '/triggers/manual'), '2016-06-01').value]"
+                },
+                "endpointType": "WebHook"
+            }
+        }
+    },
+    {
         "type": "Microsoft.Web/connections",
         "apiVersion": "2016-06-01",
         "name": "[parameters('connections_visualstudioteamservices_name')]",
