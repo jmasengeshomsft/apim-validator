@@ -321,12 +321,12 @@
                 "description": "Azure DevOps provides services for teams to share code, track work, and ship software - for any language, all in a single package. It's the perfect complement to your IDE.",
                 "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1528/1.0.1528.2589/vsts/icon.png",
                 "brandColor": "#0078d7",
-                "id": "[concat('Microsoft.Web/locations/centralus/managedApis/', parameters('connections_visualstudioteamservices_name'))]",
+                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/', parameters('connections_visualstudioteamservices_name'))]",
                 "type": "Microsoft.Web/locations/managedApis"
             },
             "testLinks": [
                 {
-                    "requestUri": "[concat('Microsoft.Web/connections/', parameters('connections_visualstudioteamservices_name'), '/extensions/proxy/_apis/Accounts?api-version=2016-06-01')]",
+                    "requestUri": "[concat('https://management.azure.com:443/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/connections/', parameters('connections_visualstudioteamservices_name'), '/extensions/proxy/_apis/Accounts?api-version=2016-06-01')]",
                     "method": "get"
                 }
             ]
@@ -455,7 +455,7 @@
                         "visualstudioteamservices": {
                             "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_visualstudioteamservices_name'))]",
                             "connectionName": "visualstudioteamservices",
-                            "id": "Microsoft.Web/locations/centralus/managedApis/visualstudioteamservices"
+                            "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location,'/managedApis/visualstudioteamservices')]"
                         }
                     }
                 }
