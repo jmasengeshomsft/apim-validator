@@ -34,7 +34,8 @@ namespace APIM.Validation.Functions
         public Azure.Messaging.EventGrid.EventGridPublisherClient InitializeEventGridExceptionTopicClient()
         {
             var creds = new DefaultAzureCredential();
-            var eventGridClient = new Azure.Messaging.EventGrid.EventGridPublisherClient(new Uri("https://apim-policy-exceptions.centralus-1.eventgrid.azure.net/api/events"), creds);
+            var endPointUrl = System.Environment.GetEnvironmentVariable("APIMEXCEPTIONS_TOPIC_URL");
+            var eventGridClient = new Azure.Messaging.EventGrid.EventGridPublisherClient(new Uri(endPointUrl), creds);
             return eventGridClient;
         }
     }
