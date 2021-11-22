@@ -200,7 +200,7 @@
              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
         ],
         "properties": {
-            "source": "[resourceID('Microsoft.ApiManagement/service', parameters('apimServiceName'))]",
+            "source": "[resourceId('Microsoft.ApiManagement/service', parameters('apimServiceName'))]",
             "topicType": "Microsoft.ApiManagement.Service"
         }
     },
@@ -210,7 +210,7 @@
         "name": "[concat(parameters('apimServiceName'), '/', variables('functionAppName'))]",
         "dependsOn": [
               "[resourceId('Microsoft.EventGrid/systemTopics', parameters('apimServiceName'))]",
-              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+              "[resourceId('Microsoft.Web/sites/sourcecontrols', variables('functionAppName'), 'web')]"
         ],
         "properties": {
             "destination": {
