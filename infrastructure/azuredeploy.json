@@ -16,6 +16,10 @@
        "type": "string",
        "defaultValue": "[newGuid()]"
     },
+     "functionToEventGridTopicRoleNameGuid": {
+       "type": "string",
+       "defaultValue": "[newGuid()]"
+    },
     "apimServiceName": {
        "type": "string"
     },
@@ -226,6 +230,21 @@
             "publicNetworkAccess": "Enabled",
             "disableLocalAuth": false
         }
+    },
+    {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2020-04-01-preview",
+        "name": "[parameters('functionToEventGridTopicRoleNameGuid')]",
+        "scope": "[concat('Microsoft.EventGrid/topics', '/', variables('apimServiceExceptionsTopicName'))]",
+        "properties": {
+            "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'd5a91429-5739-47e2-a06b-3470a27159e7')]",
+            "principalId":  "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')),'2020-06-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName'))]",
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+        ]
     },
     {
         "type": "Microsoft.EventGrid/eventSubscriptions",
