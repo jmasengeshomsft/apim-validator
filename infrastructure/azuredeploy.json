@@ -116,7 +116,7 @@
                         "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
                     },
                     {
-                        "name": "APIMEXCEPTIONS_TOPIC_URL",
+                        "name": "APIM_EXCEPTIONS_TOPIC_ENDPOINT",
                         "value": "[reference(resourceId('Microsoft.EventGrid/topics/', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]"
                     }
                 ]
