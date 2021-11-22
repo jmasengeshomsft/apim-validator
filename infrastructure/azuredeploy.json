@@ -258,7 +258,16 @@
         "name": "[concat(variables('functionAppName'), '/appsettings')]",
         "apiVersion": "2021-02-01",
         "properties": {
-            "APIM_EXCEPTIONS_TOPIC_ENDPOINT": "[reference(resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]"
+            "APIM_EXCEPTIONS_TOPIC_ENDPOINT": "[reference(resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2019-06-01').keys[0].value)]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2019-06-01').keys[0].value)]",
+            "WEBSITE_CONTENTSHARE": "[concat(variables('functionAppName'), uniqueString(resourceGroup().id))]",
+            "STORAGE_ACCOUNT_NAME": "[variables('storageAccountName')]",
+            "STORAGE_ACCOUNT_KEY": "[listKeys(variables('storageAccountId'),'2019-06-01').keys[0].value]",
+            "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+            "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+            "FUNCTIONS_EXTENSION_VERSION": "~3",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
         },
         "dependsOn": [ 
             "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
