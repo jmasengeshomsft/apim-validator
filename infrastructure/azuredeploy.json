@@ -114,18 +114,18 @@
                     {
                         "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                         "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
-                    },
-                    {
-                        "name": "APIM_EXCEPTIONS_TOPIC_ENDPOINT",
-                        "value": "[reference(resourceId('Microsoft.EventGrid/topics/', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]"
                     }
+                    // {
+                    //     "name": "APIM_EXCEPTIONS_TOPIC_ENDPOINT",
+                    //     "value": "[reference(resourceId('Microsoft.EventGrid/topics/', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]"
+                    // }
                 ]
             }
         },
         "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-            "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
-            "[resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName'))]"
+            "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+           // "[resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName'))]"
         ],
         "resources": [
             {
@@ -251,6 +251,18 @@
             "publicNetworkAccess": "Enabled",
             "disableLocalAuth": false
         }
+    },
+    {
+        "type": "Microsoft.Web/sites/config",
+        "name": "[concat(variables('functionAppName'), '/appsettings')]",
+        "apiVersion": "2021-02-01",
+        "properties": {
+            "APIM_EXCEPTIONS_TOPIC_ENDPOINT": "[reference(resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName')), '2021-12-01').EndPoint]"
+        },
+        "dependsOn": [ 
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+            "[resourceId('Microsoft.EventGrid/topics', variables('apimServiceExceptionsTopicName'))]"
+        ]
     },
     {
         "type": "Microsoft.Authorization/roleAssignments",
