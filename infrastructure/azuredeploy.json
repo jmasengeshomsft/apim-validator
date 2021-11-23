@@ -442,7 +442,7 @@
                                         }
                                     },
                                     "method": "patch",
-                                    "path": "[concat('/@{encodeURIComponent(encodeURIComponent(''', parameters('azureDevOpsProject'), '''))}', '/_apis/wit/workitems/$@{encodeURIComponent(''','issue', ''')')]",
+                                    "path": "[concat('/@{encodeURIComponent(encodeURIComponent(''', parameters('azureDevOpsProject'), '''))}', '/_apis/wit/workitems/$@{encodeURIComponent(encodeURIComponent(''','issue', '''))}')]",
                                     "queries": {
                                         "account": "[parameters('azureDevOpsAccount')]"
                                     }
